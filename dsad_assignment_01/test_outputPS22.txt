@@ -1,0 +1,50 @@
+--------Function showAll --------
+Total no. of freight trains: 5
+Total no. of cities: 8
+List of Freight trains:
+T1235
+T2342
+T1122
+T2341
+T5623
+List of cities:
+Chennai
+New Delhi
+Ahmedabad
+Mumbai
+Nagpur
+Hyderabad
+Calcutta
+Vishakhapatnam
+---------------------------------------
+
+--------Function displayTransportHub --------
+Main transport hub: New Delhi
+Number of trains visited: 3
+List of Freight trains: 
+T1235
+T2342
+T2341
+-----------------------------------------
+
+--------Function displayConnectedCities --------
+Freight train name: T1122
+Number of cities connected: 3
+List of cities connected directly by T1122:
+ Ahmedabad
+ Mumbai
+ Nagpur
+-----------------------------------------
+
+--------Function displayDirectTrain --------
+City A: Calcutta
+City B: New Delhi
+Package can be sent directly: Yes, T2342 (if no, display appropriate message)
+-----------------------------------------
+
+--------Function findServiceAvailable --------
+City A: Calcutta
+City B: Nagpur
+Can the package be sent: Yes, Can the package be sent: Yes, Calcutta > T2342 > New Delhi >
+T2341 > Ahmedabad > T1122 > Nagpur (if no, display appropriate message)
+-----------------------------------------
