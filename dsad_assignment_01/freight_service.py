@@ -65,8 +65,6 @@ class Graph(object):
             self.list_of_distinct_cities.append(city)
             self.list_of_distinct_nodes.append(self.create_node(city))
 
-        print(self.list_of_distinct_cities)
-
         for i in range(len(self.list_of_trains)):
             train_label = self.list_of_trains[i]
             # create nodes out of the list of cities
@@ -94,7 +92,6 @@ class Graph(object):
         return Edge(source, target, train_label)
 
     def update_adjacency_matrix(self, index_of_source_city, index_of_target_city):
-        # print("indices:", index_of_source_city, index_of_target_city)
         if (index_of_source_city != index_of_target_city):
             self.adjacency_matrix[index_of_source_city][index_of_target_city] = 1
             self.adjacency_matrix[index_of_target_city][index_of_source_city] = 1
@@ -111,6 +108,7 @@ class Graph(object):
     def print_edge_list(self):
         for edge in self.set_of_distinct_edges:
             print(edge.train_label,":", edge.get_source().get_city_label(),"<--->", edge.get_target().get_city_label())
+
 
 #####################################################################
 
@@ -142,6 +140,9 @@ class FileUtilities(object):
     def get_list_of_trains(self):
         return self.list_of_trains
 
+    def get_number_of_freight_trains(self):
+        return len(self.list_of_trains)
+
     def get_list_of_routes(self):
         return self.list_of_routes
 
@@ -167,10 +168,21 @@ class FreightService(object):
         # now create the Graph object and then initialize it
         self.graph = Graph(number_of_distinct_cities, list_of_trains, list_of_routes, set_of_distinct_cities)
         self.graph.initializeGraph()
-        self.graph.print_adjacency_matrix()  # remove this function call
+        # self.graph.print_adjacency_matrix()  # remove this function call
 
     def showAll(self):
-        pass
+        print("--------Function showAll --------")
+        print("Total no. of freight trains:", self.fileUtilities.get_number_of_freight_trains())
+        print("Total no. of cities:", self.fileUtilities.get_number_of_distinct_cities())
+        print()
+        print("List of Freight trains:")
+        for train in self.fileUtilities.get_list_of_trains():
+            print(train)
+        print()
+        print("List of cities:")
+        for city in self.fileUtilities.get_set_of_distinct_cities():
+            print(city)
+        print("---------------------------------------")
 
     def displayTransportHub(self):
         pass
@@ -192,6 +204,7 @@ class FreightService(object):
 if __name__ == "__main__":
     freightService = FreightService()
     freightService.readCityTrainfile("inputPS22.txt")
-    # freightService.showAll()
+    freightService.showAll()
+    freightService.displayTransportHub()
 
 
