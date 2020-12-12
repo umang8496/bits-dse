@@ -53,9 +53,9 @@ Block_Size	Cache_Size		#hits		#misses		%miss_ratio		%hit_ratio
 	2			32			147			43			22.6			77.4
 
 
-=================================
-Part II:  Fully Associative Cache
-=================================
+========================================
+Part II:  Fully Associative Mapped Cache
+========================================
 Replacement Algorithm: Least Recently Used
 Block_Size	Cache_Size		#hits		#misses		%miss_ratio		%hit_ratio
 	2			8			143			47			24.7			75.3
@@ -96,4 +96,40 @@ Block_Size	Cache_Size		#hits		#misses		%miss_ratio		%hit_ratio
 	2			16			143			47			24.7			75.3
 	2			32			145			45			23.6			76.4
 	2			64			150			40			21				79
+
+
+======================================
+Part II:  Set Associative Mapped Cache
+Number of sets (Set Blocks) : 2 way
+======================================
+Replacement Algorithm: Random
+Block_Size	Cache_Size		#hits		#misses		%miss_ratio		%hit_ratio
+	2			4			95			95			50				50
+	2			8			129			61			32.1			67.9
+	2			16			138			52			27.3			72.7
+	2			32			149			41			21.5			78.5
+	2			64			147			43			22.6			77.4
+
+Replacement Algorithm: FIFO
+Block_Size	Cache_Size		#hits		#misses		%miss_ratio		%hit_ratio
+	2			4			95			95			50				50
+	2			8			139			51			26.8			73.2
+	2			16			142			48			25.2			74.8
+	2			32			147			43			22.6			77.4
+	2			64			150			40			21				79
+
+Replacement Algorithm: Least Recently Used
+Block_Size	Cache_Size		#hits		#misses		%miss_ratio		%hit_ratio
+	2			4			86			104			54.7			45.3
+	2			8			143			47			24.7			75.3
+	2			16			143			47			24.7			75.3
+	2			32			147			43			22.6			77.4
+	2			64			cc
+
+Replacement Algorithm : LRU
+Block_Size	Cache_Size	Set_Blocks		#hits		#misses		%miss_ratio		%hit_ratio
+	2 			64			2–Way		147			43			22.6			77.4
+	2 			64			4–Way		150			40			21				79
+	2 			64			8–Way		150			40			21				79
+
 
