@@ -147,14 +147,12 @@ class Graph(object):
             return (False, None)
 
     def find_number_of_cities_connected_by(self, train_id):
-        number_of_cities = 0
         set_of_cities_connected_by_train = set()
         for edge in self.set_of_distinct_edges:
             if (edge.get_train_label() == train_id):
-                number_of_cities += 1
                 set_of_cities_connected_by_train.add(edge.get_source().get_city_label())
                 set_of_cities_connected_by_train.add(edge.get_target().get_city_label())
-        return (number_of_cities, set_of_cities_connected_by_train)
+        return (len(set_of_cities_connected_by_train), set_of_cities_connected_by_train)
 
 
 #####################################################################
@@ -302,6 +300,8 @@ if __name__ == "__main__":
     
     freightService.displayConnectedCities("T1122")
     freightService.displayConnectedCities("T0000")
+    freightService.displayConnectedCities("T1235")
+    freightService.displayConnectedCities("T3344")
 
     # freightService.findServiceAvailable("Calcutta", "Mumbai")
     # freightService.findServiceAvailable("Nagpur", "Vishakhapatnam")
