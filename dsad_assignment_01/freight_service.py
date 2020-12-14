@@ -69,7 +69,6 @@ class Graph(object):
             train_label = self.list_of_trains[i]
             # create nodes out of the list of cities
             list_of_cities = self.list_of_routes[i]
-            # print(train_label,"<-->", list_of_cities)
             for f in range(len(list_of_cities)):
                 for g in range(f, len(list_of_cities)):
                     source_city = list_of_cities[f]
@@ -201,13 +200,14 @@ class FreightService(object):
         print("Total no. of freight trains:", self.fileUtilities.get_number_of_freight_trains())
         print("Total no. of cities:", self.fileUtilities.get_number_of_distinct_cities())
         print()
-        print("List of Freight trains:")
-        for train in self.fileUtilities.get_list_of_trains():
-            print(train)
-        print()
-        print("List of cities:")
-        for city in self.fileUtilities.get_set_of_distinct_cities():
-            print(city)
+        if (self.fileUtilities.get_number_of_freight_trains() != 0) and (self.fileUtilities.get_number_of_distinct_cities() != 0):
+            print("List of Freight trains:")
+            for train in self.fileUtilities.get_list_of_trains():
+                print(train)
+            print()
+            print("List of cities:")
+            for city in self.fileUtilities.get_set_of_distinct_cities():
+                print(city)
         print("---------------------------------------")
 
     def displayTransportHub(self):
@@ -252,7 +252,6 @@ class FreightService(object):
         else:
             print("No, Package cannot be sent through Direct route train")
 
-
     def findServiceAvailable(self, city_a, city_b): 
         pass
     
@@ -265,8 +264,8 @@ if __name__ == "__main__":
     freightService = FreightService()
     freightService.readCityTrainfile("inputPS22.txt")
     freightService.showAll()
-    freightService.displayTransportHub()
-    #freightService.displayDirectTrain('Mumbai','Ahmedabad')
-    #freightService.displayConnectedCities('T1123')
+    # freightService.displayTransportHub()
+    # freightService.displayDirectTrain('Mumbai','Ahmedabad')
+    # freightService.displayConnectedCities('T1123')
 
 
