@@ -5,24 +5,24 @@
 
 # Node Definition
 class Node(object):
-    city_label = None
-
     def __init__(self, city_label):
         self.city_label = city_label
-    
+        self.set_of_associated_trains = set()
+
     def get_city_label(self):
         return self.city_label
 
+    def get_set_of_associated_trains(self):
+        return self.set_of_associated_trains
+
+    def get_number_of_associated_trains(self):
+        return len(self.set_of_associated_trains)
 
 #####################################################################
 
 
 # Edge Definition
 class Edge(object):
-    source = None
-    target = None
-    train_label = None
-
     def __init__(self, source, target, train_label):
         self.source = source
         self.target = target
@@ -64,10 +64,9 @@ class Graph(object):
         for city in self.set_of_distinct_cities:
             self.list_of_distinct_cities.append(city)
             self.list_of_distinct_nodes.append(self.create_node(city))
-
+        # print(self.list_of_distinct_cities)
         for i in range(len(self.list_of_trains)):
             train_label = self.list_of_trains[i]
-            # create nodes out of the list of cities
             list_of_cities = self.list_of_routes[i]
             for f in range(len(list_of_cities)):
                 for g in range(f, len(list_of_cities)):
@@ -79,10 +78,10 @@ class Graph(object):
                         source_node = self.list_of_distinct_nodes[source_index]
                         target_node = self.list_of_distinct_nodes[target_index]
                         edge = self.create_edge(source_node, target_node, train_label)
-                        self.update_adjacency_matrix(source_index, target_index)
                         self.set_of_distinct_edges.add(edge)
-                    else:
-                        continue
+                        self.update_adjacency_matrix(source_index, target_index)
+                        source_node.set_of_associated_trains.add(train_label)
+                        target_node.set_of_associated_trains.add(train_label)
 
     def create_node(self, city_label):
         return Node(city_label)
@@ -103,37 +102,28 @@ class Graph(object):
                 print((self.adjacency_matrix[i][k]), end="  ")
             print()
     
-    # remove the following function before submitting the assignment
     def print_edge_list(self):
         for edge in self.set_of_distinct_edges:
             print(edge.train_label,":", edge.get_source().get_city_label(),"<--->", edge.get_target().get_city_label())
 
-    def find_transport_hub(self, city):
-        list_of_city_train_nodes = set()
-        self.city = city
-        for edge in self.set_of_distinct_edges:
-            if edge.get_source().get_city_label() == self.city or edge.get_target().get_city_label() == self.city:
-                list_of_city_train_nodes.add(edge.train_label)
-        return list_of_city_train_nodes
+    def get_adjacency_matix(self):
+        return self.adjacency_matrix
 
-    def find_direct_train(self,source,target):
-        TrainNumber=None
-        for edge in self.set_of_distinct_edges:
-            if (source==edge.get_source().get_city_label() and target==edge.get_target().get_city_label()):
-                TrainNumber = edge.train_label
-            if (source==edge.get_target().get_city_label() and target==edge.get_source().get_city_label()):
-                TrainNumber = edge.train_label
-        return TrainNumber
+    def get_nodes_with_highest_edge(self):
+        list_of_number_of_connected_trains = []
+        for node in self.list_of_distinct_nodes:
+            list_of_number_of_connected_trains.append(node.get_number_of_associated_trains())
+        max_number_of_connected_trains = max(list_of_number_of_connected_trains)
+        candidate_hub = []
+        for node in self.list_of_distinct_nodes:
+            if(node.get_number_of_associated_trains() == max_number_of_connected_trains):
+                candidate_hub.append(node)
+        final_hub = []
+        for node in candidate_hub:
+            if(node.get_number_of_associated_trains() == max_number_of_connected_trains):
+                final_hub.append(node)
+        return final_hub            
 
-    def find_connected_cities(self,train):
-        list_of_city_train_nodes = set()
-        self.train = train
-        for edge in self.set_of_distinct_edges:
-            if self.train == edge.train_label:
-                list_of_city_train_nodes.add(edge.get_target().get_city_label())
-                list_of_city_train_nodes.add(edge.get_source().get_city_label())
-        return list_of_city_train_nodes
-            
 
 #####################################################################
 
@@ -211,46 +201,20 @@ class FreightService(object):
         print("---------------------------------------")
 
     def displayTransportHub(self):
-        print("--------Function displayTransportHub --------")
-        list_of_city_train_nodes = set()
-        main_city_visited = 0
-        main_city_train_nodes = set()
-        for city in self.fileUtilities.get_set_of_distinct_cities():
-            #for each city find the list of trains that are connected
-            list_of_city_train_nodes = self.graph.find_transport_hub(city)
-            # Compare number of trains visited in each city and assign the greatest number of trains to the main_city_hub
-            if (main_city_visited < len(list_of_city_train_nodes)):
-                main_city_visited = len(list_of_city_train_nodes)
-                main_city_node = city
-                main_city_train_nodes = list_of_city_train_nodes
-        print("Main transport hub:", main_city_node)
-        print("Number of trains visited:", main_city_visited)
-        print("List of Freight trains:")
-        for TrainNumber in main_city_train_nodes:
-            print(TrainNumber)
+        print("--------Function displayTransportHub--------")
+        list_of_hubs = self.graph.get_nodes_with_highest_edge()
+        for node in list_of_hubs:
+            print("Main transport hub:", node.get_city_label())
+            print("Number of trains visited:", node.get_number_of_associated_trains())
+            print("List of Freight trains:")
+            for trains in node.get_set_of_associated_trains():
+                print(trains)
 
     def displayConnectedCities(self,train):
-        list_of_connected_cities=set()
-        print("--------Function displayConnectedCities --------")
-        list_of_connected_cities = self.graph.find_connected_cities(train)
-        if len(list_of_connected_cities) >= 1:
-            print("Freight train number:", train)
-            print("Number of cities connected:", len(list_of_connected_cities))
-            print("List of cities connected directly by", train,":")
-            for ConnectedCities in list_of_connected_cities:
-                print(ConnectedCities)
-        else:
-            print("The Freight train number is not available")
+        pass
 
     def displayDirectTrain(self, city_a, city_b):
-        TrainNumber=self.graph.find_direct_train(city_a,city_b)
-        print("--------Function displayDirectTrain --------")
-        print("City A:",city_a)
-        print("City B:",city_b)
-        if TrainNumber!=None:
-            print("Package can be sent directly: Yes,",TrainNumber)
-        else:
-            print("No, Package cannot be sent through Direct route train")
+        pass
 
     def findServiceAvailable(self, city_a, city_b): 
         pass
@@ -264,7 +228,7 @@ if __name__ == "__main__":
     freightService = FreightService()
     freightService.readCityTrainfile("inputPS22.txt")
     freightService.showAll()
-    # freightService.displayTransportHub()
+    freightService.displayTransportHub()
     # freightService.displayDirectTrain('Mumbai','Ahmedabad')
     # freightService.displayConnectedCities('T1123')
 
