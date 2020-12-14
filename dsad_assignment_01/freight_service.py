@@ -8,6 +8,7 @@ class Node(object):
     def __init__(self, city_label):
         self.city_label = city_label
         self.set_of_associated_trains = set()
+        self.set_of_connected_edges = set()
 
     def get_city_label(self):
         return self.city_label
@@ -18,21 +19,24 @@ class Node(object):
     def get_number_of_associated_trains(self):
         return len(self.set_of_associated_trains)
 
+    def get_set_of_connected_edges(self):
+        return self.set_of_connected_edges
+
 #####################################################################
 
 
 # Edge Definition
 class Edge(object):
     def __init__(self, source, target, train_label):
-        self.source = source
-        self.target = target
+        self.source_node = source
+        self.target_node = target
         self.train_label = train_label
 
     def get_source(self):
-        return self.source
+        return self.source_node
 
     def get_target(self):
-        return self.target
+        return self.target_node
 
     def get_train_label(self):
         return self.train_label
@@ -81,7 +85,9 @@ class Graph(object):
                         self.set_of_distinct_edges.add(edge)
                         self.update_adjacency_matrix(source_index, target_index)
                         source_node.set_of_associated_trains.add(train_label)
+                        source_node.set_of_connected_edges.add(edge)
                         target_node.set_of_associated_trains.add(train_label)
+                        target_node.set_of_connected_edges.add(edge)
 
     def create_node(self, city_label):
         return Node(city_label)
@@ -124,6 +130,22 @@ class Graph(object):
                 final_hub.append(node)
         return final_hub            
 
+    def is_city_available(self, city):
+        return (city in self.list_of_distinct_cities)
+
+    def does_direct_train_exist(self, city_a, city_b):
+        city_a_index = self.list_of_distinct_cities.index(city_a)
+        city_b_index = self.list_of_distinct_cities.index(city_b)
+        if (self.adjacency_matrix[city_a_index][city_b_index] == 1):
+            city_a_node = self.list_of_distinct_nodes[city_a_index]
+            city_b_node = self.list_of_distinct_nodes[city_b_index]
+            train_id = None
+            for edge in city_a_node.get_set_of_connected_edges():
+                if (edge.get_target() == city_b_node):
+                    train_id = edge.get_train_label()
+            return (True, train_id)
+        else:
+            return (False, None)
 
 #####################################################################
 
@@ -209,17 +231,32 @@ class FreightService(object):
             print("List of Freight trains:")
             for trains in node.get_set_of_associated_trains():
                 print(trains)
+        print("---------------------------------------")
 
     def displayConnectedCities(self,train):
         pass
 
     def displayDirectTrain(self, city_a, city_b):
-        pass
+        print("--------Function displayDirectTrain--------")
+        print("City A:", city_a)
+        print("City B:", city_b)
+
+        if (city_a == city_b):
+            print("Source and destination cities are same, hence no freight service is available.")
+        elif (self.graph.is_city_available(city_a) and self.graph.is_city_available(city_b)):
+            status_tuple = self.graph.does_direct_train_exist(city_a, city_b)
+            if (status_tuple[0]):
+                print("Package can be sent directly: Yes,", status_tuple[1])
+            else:
+                print("Package can be sent directly: No")
+        else:
+            if(not self.graph.is_city_available(city_a)):
+                print("City", city_a, "is not available.")
+            if(not self.graph.is_city_available(city_b)):
+                print("City", city_b, "is not available.")
+        print("---------------------------------------")
 
     def findServiceAvailable(self, city_a, city_b): 
-        pass
-    
-    def readPromptFile(self, promptfile):
         pass
 
 
@@ -229,7 +266,17 @@ if __name__ == "__main__":
     freightService.readCityTrainfile("inputPS22.txt")
     freightService.showAll()
     freightService.displayTransportHub()
-    # freightService.displayDirectTrain('Mumbai','Ahmedabad')
+
+    freightService.displayDirectTrain('Mumbai', 'Bangalore')
+    freightService.displayDirectTrain('Bangalore', 'Bangalore')
+    freightService.displayDirectTrain('Mumbai', 'Calcutta')
+    freightService.displayDirectTrain('Nagpur', 'Chennai')
+    freightService.displayDirectTrain('Mumbai', 'Ahmedabad')
+    freightService.displayDirectTrain('Ahmedabad', 'New Delhi')
+    freightService.displayDirectTrain('Vishakhapatnam', 'Hyderabad')
+    freightService.displayDirectTrain('New Delhi', 'Chennai')
+    freightService.displayDirectTrain('Calcutta', 'New Delhi')
+    
     # freightService.displayConnectedCities('T1123')
 
 
