@@ -9,6 +9,7 @@ class Node(object):
         self.city_label = city_label
         self.set_of_associated_trains = set()
         self.set_of_connected_edges = set()
+        self.visited = False
 
     def get_city_label(self):
         return self.city_label
@@ -21,6 +22,16 @@ class Node(object):
 
     def get_set_of_connected_edges(self):
         return self.set_of_connected_edges
+
+    def is_visited(self):    
+        return self.visited
+    
+    def visit_the_node(self):
+        self.visited = True
+
+    def unvisit_the_node(self):
+        self.visited = False
+
 
 #####################################################################
 
@@ -67,7 +78,7 @@ class Graph(object):
         for city in self.set_of_distinct_cities:
             self.list_of_distinct_cities.append(city)
             self.list_of_distinct_nodes.append(self.create_node(city))
-        # print(self.list_of_distinct_cities)
+        print(self.list_of_distinct_cities)
         for i in range(len(self.list_of_trains)):
             train_label = self.list_of_trains[i]
             list_of_cities = self.list_of_routes[i]
@@ -80,13 +91,15 @@ class Graph(object):
                         target_index = self.list_of_distinct_cities.index(target_city)
                         source_node = self.list_of_distinct_nodes[source_index]
                         target_node = self.list_of_distinct_nodes[target_index]
-                        edge = self.create_edge(source_node, target_node, train_label)
-                        self.set_of_distinct_edges.add(edge)
+                        e1 = self.create_edge(source_node, target_node, train_label)
+                        self.set_of_distinct_edges.add(e1)
+                        e2 = self.create_edge(target_node, source_node, train_label)
+                        self.set_of_distinct_edges.add(e2)
                         self.update_adjacency_matrix(source_index, target_index)
                         source_node.set_of_associated_trains.add(train_label)
-                        source_node.set_of_connected_edges.add(edge)
+                        source_node.set_of_connected_edges.add(e1)
                         target_node.set_of_associated_trains.add(train_label)
-                        target_node.set_of_connected_edges.add(edge)
+                        target_node.set_of_connected_edges.add(e2)
 
     def create_node(self, city_label):
         return Node(city_label)
@@ -153,6 +166,36 @@ class Graph(object):
                 set_of_cities_connected_by_train.add(edge.get_source().get_city_label())
                 set_of_cities_connected_by_train.add(edge.get_target().get_city_label())
         return (len(set_of_cities_connected_by_train), set_of_cities_connected_by_train)
+
+    def is_reachable(self, city_a, city_b):
+        source_node_index = self.list_of_distinct_cities.index(city_a)
+        source_node = self.list_of_distinct_nodes[source_node_index]
+
+        queue= []
+        source_node.visit_the_node()
+        for edge in source_node.get_set_of_connected_edges():
+            queue.append(edge)
+        
+        while (len(queue) != 0):
+            edge = queue.pop()
+            next_node = edge.get_target()
+            if (next_node.get_city_label() == city_b):
+                return True
+            else:
+                if (not next_node.is_visited()):
+                    for e in next_node.get_set_of_connected_edges():
+                        if (e.get_target().is_visited()):
+                            continue
+                        else:
+                            queue.append(e)
+                    next_node.visit_the_node()
+                else:
+                    continue
+        return False
+
+    def unvisit_all_nodes(self):
+        for node in self.list_of_distinct_nodes:
+            node.unvisit_the_node()
 
 
 #####################################################################
@@ -277,7 +320,27 @@ class FreightService(object):
         print("---------------------------------------")
 
     def findServiceAvailable(self, city_a, city_b): 
-        pass
+        print("--------Function findServiceAvailable--------")
+        print("City A:", city_a)
+        print("City B:", city_b)
+        
+        if (self.graph.is_city_available(city_a) and self.graph.is_city_available(city_b)):
+            if(city_a == city_b):
+                print("No Freight Service is available.")
+                print("(Source and Target cities are same)")
+            elif (city_a != city_b):
+                result = self.graph.is_reachable(city_a, city_b)
+                if (result):
+                    print("Freight Service is available.")
+                else:
+                    print("No Freight Service is available.")
+        else:
+            if(not self.graph.is_city_available(city_a)):
+                print("City", city_a, "is not available.")
+            if(not self.graph.is_city_available(city_b)):
+                print("City", city_b, "is not available.")
+        print("---------------------------------------")
+        self.graph.unvisit_all_nodes()
 
 
 #####################################################################
@@ -285,10 +348,10 @@ if __name__ == "__main__":
     freightService = FreightService()
     freightService.readCityTrainfile("inputPS22.txt")
     
-    freightService.showAll()
-    freightService.displayTransportHub()
+    # freightService.showAll()
+    # freightService.displayTransportHub()
 
-    # freightService.displayDirectTrain("Mumbai", "Bangalore")
+    # freightService.displayDirectTrain("Mumbai", "Pune")
     # freightService.displayDirectTrain("Bangalore", "Bangalore")
     # freightService.displayDirectTrain("Mumbai", "Calcutta")
     # freightService.displayDirectTrain("Nagpur", "Chennai")
@@ -298,12 +361,16 @@ if __name__ == "__main__":
     # freightService.displayDirectTrain("New Delhi", "Chennai")
     # freightService.displayDirectTrain("Calcutta", "New Delhi")
     
-    freightService.displayConnectedCities("T1122")
-    freightService.displayConnectedCities("T0000")
-    freightService.displayConnectedCities("T1235")
-    freightService.displayConnectedCities("T3344")
+    # freightService.displayConnectedCities("T1122")
+    # freightService.displayConnectedCities("T0000")
+    # freightService.displayConnectedCities("T1235")
+    # freightService.displayConnectedCities("T3344")
 
-    # freightService.findServiceAvailable("Calcutta", "Mumbai")
+    freightService.findServiceAvailable("Calcutta", "Chennai")
+    freightService.findServiceAvailable("Calcutta", "Mumbai")
     # freightService.findServiceAvailable("Nagpur", "Vishakhapatnam")
+    # freightService.findServiceAvailable("Chennai", "Bangalore")
+    # freightService.findServiceAvailable("Bangalore", "Chennai")
+    # freightService.findServiceAvailable("Bangalore", "Bangalore")
 
 
