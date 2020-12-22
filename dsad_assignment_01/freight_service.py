@@ -9,7 +9,6 @@ class Node(object):
         self.city_label = city_label
         self.set_of_associated_trains = set()
         self.set_of_connected_edges = set()
-        self.visited = False
 
     def get_city_label(self):
         return self.city_label
@@ -22,15 +21,6 @@ class Node(object):
 
     def get_set_of_connected_edges(self):
         return self.set_of_connected_edges
-
-    # def is_visited(self):    
-    #     return self.visited
-    
-    # def visit_the_node(self):
-    #     self.visited = True
-
-    # def unvisit_the_node(self):
-    #     self.visited = False
 
 
 #####################################################################
@@ -77,7 +67,7 @@ class Graph(object):
         for city in self.set_of_distinct_cities:
             self.list_of_distinct_cities.append(city)
             self.list_of_distinct_nodes.append(self.create_node(city))
-        # print(self.list_of_distinct_cities)
+        # print(self.list_of_distinct_cities)    # uncomment while debugging
         for i in range(len(self.list_of_trains)):
             train_label = self.list_of_trains[i]
             list_of_cities = self.list_of_routes[i]
@@ -113,15 +103,12 @@ class Graph(object):
         else:
             self.adjacency_matrix[index_of_source_city][index_of_target_city] = 0
 
+    # method for printing the adjacency matrix
     def print_adjacency_matrix(self):
         for i in range(self.number_of_distinct_cities):
             for k in range(self.number_of_distinct_cities):
                 print((self.adjacency_matrix[i][k]), end="  ")
             print()
-    
-    def print_edge_list(self):
-        for edge in self.set_of_distinct_edges:
-            print(edge.train_label,":", edge.get_source().get_city_label(),"<--->", edge.get_target().get_city_label())
 
     def get_adjacency_matix(self):
         return self.adjacency_matrix
@@ -182,7 +169,6 @@ class Graph(object):
             self.path = [source_node_index]
             self.is_connected(source_node_index, target_node_index, temp_adjacency_matrix, self.path)
             if (self.path[-1] == target_node_index):
-                # print(self.path) # remove this
                 return (True, self.path)
         if (self.path[-1] != target_node_index):
             return (False, self.path)
@@ -269,18 +255,15 @@ class FreightService(object):
     def readCityTrainfile(self, inputfile):
         # read the input file
         self.fileUtilities.read_input_file(inputfile)
-        
         # create the collections of trains and cities
         number_of_distinct_cities = self.fileUtilities.get_number_of_distinct_cities()
         list_of_trains = self.fileUtilities.get_list_of_trains()
         list_of_routes = self.fileUtilities.get_list_of_routes()
         set_of_distinct_cities = self.fileUtilities.get_set_of_distinct_cities()
-
         # now create the Graph object and then initialize it
         self.graph = Graph(number_of_distinct_cities, list_of_trains, list_of_routes, set_of_distinct_cities)
         self.graph.initializeGraph()
-        # print("Original Adjacency Matrix")
-        # self.graph.print_adjacency_matrix()  # remove this function call
+        # self.graph.print_adjacency_matrix()  # uncomment while debugging
 
     def showAll(self):
         print("--------Function showAll --------")
@@ -327,7 +310,6 @@ class FreightService(object):
         print("--------Function displayDirectTrain--------")
         print("City A:", city_a)
         print("City B:", city_b)
-
         if (city_a == city_b):
             print("Source and destination cities are same, hence no freight service is available.")
         elif (self.graph.is_city_available(city_a) and self.graph.is_city_available(city_b)):
@@ -377,7 +359,6 @@ class FreightService(object):
             train_number = self.graph.get_train_number_for(src, des)
             printable_path.append(train_number)
             printable_path.append(des.get_city_label())
-
         for f in printable_path:
             print(f, end=" ")
             if (f != printable_path[-1]):
