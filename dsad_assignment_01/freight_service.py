@@ -249,9 +249,10 @@ class InputFileProcessor(object):
 
 # FreightService
 class FreightService(object):
-    def __init__(self):
+    def __init__(self, o_file):
         self.graph = None
         self.fileProcessor = InputFileProcessor()
+        self.fw = o_file
 
     def readCityTrainfile(self, inputfile):
         # read the input file
@@ -267,86 +268,133 @@ class FreightService(object):
         # self.graph.print_adjacency_matrix()  # uncomment while debugging
 
     def showAll(self):
-        print("--------Function showAll--------")
-        print("Total no. of freight trains:", self.fileProcessor.get_number_of_freight_trains())
-        print("Total no. of cities:", self.fileProcessor.get_number_of_distinct_cities())
-        print()
+        # print("--------Function showAll--------")
+        self.fw.write("--------Function showAll--------" + str("\n"))
+        # print("Total no. of freight trains:", self.fileProcessor.get_number_of_freight_trains())
+        self.fw.write("Total no. of freight trains: " + str(self.fileProcessor.get_number_of_freight_trains()) + str("\n"))
+        # print("Total no. of cities:", self.fileProcessor.get_number_of_distinct_cities())
+        self.fw.write("Total no. of cities: " + str(self.fileProcessor.get_number_of_distinct_cities()) + str("\n"))
+        # print()
+        self.fw.write(str("\n"))
         if (self.fileProcessor.get_number_of_freight_trains() != 0) and (self.fileProcessor.get_number_of_distinct_cities() != 0):
-            print("List of Freight trains:")
+            # print("List of Freight trains:")
+            self.fw.write("List of Freight trains: " + str("\n"))
             for train in self.fileProcessor.get_list_of_trains():
-                print(train)
-            print()
-            print("List of cities:")
+                # print(train)
+                self.fw.write(train + str("\n"))
+            # print()
+            self.fw.write(str("\n"))
+            # print("List of cities:")
+            self.fw.write("List of cities: " + str("\n"))
             for city in self.fileProcessor.get_set_of_distinct_cities():
-                print(city)
-        print("---------------------------------------")
+                # print(city)
+                self.fw.write(city + str("\n"))
+        # print("---------------------------------------")
+        self.fw.write("---------------------------------------" + str("\n"))
+        self.fw.write(str("\n"))
 
     def displayTransportHub(self):
-        print("--------Function displayTransportHub--------")
+        # print("--------Function displayTransportHub--------")
+        self.fw.write("--------Function displayTransportHub--------" + str("\n"))
         list_of_hubs = self.graph.get_nodes_with_highest_edge()
         for node in list_of_hubs:
-            print("Main transport hub:", node.get_city_label())
-            print("Number of trains visited:", node.get_number_of_associated_trains())
-            print("List of Freight trains:")
+            # print("Main transport hub:", node.get_city_label())
+            self.fw.write("Main transport hub: " + str(node.get_city_label()) + str("\n"))
+            # print("Number of trains visited:", node.get_number_of_associated_trains())
+            self.fw.write("Number of trains visited: " + str(node.get_number_of_associated_trains()) + str("\n"))
+            # print("List of Freight trains:")
+            self.fw.write("List of Freight trains: " + str("\n"))
             for trains in node.get_set_of_associated_trains():
-                print(trains)
-        print("---------------------------------------")
+                # print(trains)
+                self.fw.write(trains + str("\n"))
+        # print("---------------------------------------")
+        self.fw.write("---------------------------------------" + str("\n"))
+        self.fw.write(str("\n"))
 
     def displayConnectedCities(self, train_id):
-        print("--------Function displayConnectedCities--------")
-        print("Freight train number:", train_id)
+        # print("--------Function displayConnectedCities--------")
+        self.fw.write("--------Function displayConnectedCities--------" + str("\n"))
+        # print("Freight train number:", train_id)
+        self.fw.write("Freight train number: " + str(train_id) + str("\n"))
         if (train_id in self.graph.list_of_trains):
             connected_cities = self.graph.find_number_of_cities_connected_by(train_id)
             number_of_connected_cities = connected_cities[0]
             list_of_connected_cities = connected_cities[1]
-            print("Number of cities connected:", number_of_connected_cities)
-            print("List of cities connected directly by", train_id, ":")
+            # print("Number of cities connected:", number_of_connected_cities)
+            self.fw.write("Number of cities connected: " + str(number_of_connected_cities) + str("\n"))
+            # print("List of cities connected directly by", train_id, ":")
+            self.fw.write("List of cities connected directly by " + str(train_id) + " : " + str("\n"))
             for cities in list_of_connected_cities:
-                print(cities)
+                # print(cities)
+                self.fw.write(cities + str("\n"))
         else:
-            print(train_id, "does not exist.")
-        print("---------------------------------------")
+            # print(train_id, "does not exist.")
+            self.fw.write(train_id + str(" does not exist.") + str("\n"))
+        # print("---------------------------------------")
+        self.fw.write("---------------------------------------" + str("\n"))
+        self.fw.write(str("\n"))
 
     def displayDirectTrain(self, city_a, city_b):
-        print("--------Function displayDirectTrain--------")
-        print("City A:", city_a)
-        print("City B:", city_b)
+        # print("--------Function displayDirectTrain--------")
+        self.fw.write("--------Function displayDirectTrain--------" + str("\n"))
+        # print("City A:", city_a)
+        self.fw.write("City A: " + str(city_a) + str("\n"))
+        # print("City B:", city_b)
+        self.fw.write("City B: " + str(city_b) + str("\n"))
         if (city_a == city_b):
-            print("Source and destination cities are same, hence no freight service is available.")
+            # print("Source and destination cities are same, hence no freight service is available.")
+            self.fw.write("Source and destination cities are same, hence no freight service is available." + str("\n"))
         elif (self.graph.is_city_available(city_a) and self.graph.is_city_available(city_b)):
             status_tuple = self.graph.does_direct_train_exist(city_a, city_b)
             if (status_tuple[0]):
-                print("Package can be sent directly: Yes,", status_tuple[1])
+                # print("Package can be sent directly: Yes,", status_tuple[1])
+                self.fw.write("Package can be sent directly: Yes, " + str(status_tuple[1]) + str("\n"))
             else:
-                print("Package can be sent directly: No")
+                # print("Package can be sent directly: No")
+                self.fw.write("Package can be sent directly: No" + str("\n"))
         else:
             if(not self.graph.is_city_available(city_a)):
-                print("City", city_a, "is not available.")
+                # print("City", city_a, "is not available.")
+                self.fw.write("City " + str(city_a) + " is not available, hence no freight service is available." + str("\n"))
             if(not self.graph.is_city_available(city_b)):
-                print("City", city_b, "is not available.")
-        print("---------------------------------------")
+                # print("City", city_b, "is not available.")
+                self.fw.write("City " + str(city_b) + " is not available, hence no freight service is available." + str("\n"))
+        # print("---------------------------------------")
+        self.fw.write("---------------------------------------" + str("\n"))
+        self.fw.write(str("\n"))
 
     def findServiceAvailable(self, city_a, city_b): 
-        print("--------Function findServiceAvailable--------")
-        print("City A:", city_a)
-        print("City B:", city_b)
+        # print("--------Function findServiceAvailable--------")
+        self.fw.write("--------Function findServiceAvailable--------" + str("\n"))
+        # print("City A:", city_a)
+        self.fw.write("City A: " + str(city_a) + str("\n"))
+        # print("City B:", city_b)
+        self.fw.write("City B: " + str(city_b) + str("\n"))
         if (self.graph.is_city_available(city_a) and self.graph.is_city_available(city_b)):
             if(city_a == city_b):
-                print("Freight Service is not available.")
-                print("(Source and Target cities are same)")
+                # print("Freight Service is not available.")
+                self.fw.write("Freight Service is not available." + str("\n"))
+                # print("(Source and Target cities are same)")
+                self.fw.write("(Source and Target cities are same)" + str("\n"))
             elif (city_a != city_b):
                 (result, path) = self.graph.is_reachable(city_a, city_b)
                 if (result):
-                    print("Can the package be sent: Yes, ", end=" ")
+                    # print("Can the package be sent: Yes, ", end=" ")
+                    self.fw.write("Can the package be sent: Yes, ")
                     self.print_the_path(path)
                 else:
-                    print("Can the package be sent: No, Freight Service is not available.")
+                    # print("Can the package be sent: No, Freight Service is not available.")
+                    self.fw.write("Can the package be sent: No, Freight Service is not available." + str("\n"))
         else:
             if(not self.graph.is_city_available(city_a)):
-                print("City", city_a, "is not available.")
+                # print("City", city_a, "is not available.")
+                self.fw.write("City " + str(city_a) + " is not available." + str("\n"))
             if(not self.graph.is_city_available(city_b)):
-                print("City", city_b, "is not available.")
-        print("---------------------------------------")
+                # print("City", city_b, "is not available.")
+                self.fw.write("City " + str(city_b) + " is not available." + str("\n"))
+        # print("---------------------------------------")
+        self.fw.write("---------------------------------------" + str("\n"))
+        self.fw.write(str("\n"))
 
     def print_the_path(self, node_index):
         connected_nodes = []
@@ -361,10 +409,13 @@ class FreightService(object):
             printable_path.append(train_number)
             printable_path.append(des.get_city_label())
         for f in printable_path:
-            print(f, end=" ")
+            # print(f, end=" ")
+            self.fw.write(str(f))
             if (f != printable_path[-1]):
-                print(">", end=" ")
-        print()
+                # print(">", end=" ")
+                self.fw.write(" > ")
+        # print()
+        self.fw.write(str("\n"))
 
 
 #####################################################################
@@ -372,6 +423,7 @@ if __name__ == "__main__":
     # Read the prompts file for processing the further instructions
     promptsfile = "promptsPS22.txt"
     outputfile = "outputPS22.txt"
+    inputfile = "inputPS22.txt"
     p_file = None
     o_file = None
     SEARCH_TRANSPORT_HUB = "searchTransportHub"
@@ -382,15 +434,14 @@ if __name__ == "__main__":
         p_file = open(promptsfile, "r")
         o_file = open(outputfile, "w")
         if (p_file != None) and (o_file != None):
-            freightService = FreightService()
+            freightService = FreightService(o_file)
             # read the input file and create the graph
-            freightService.readCityTrainfile("inputPS22.txt")
+            freightService.readCityTrainfile(inputfile)
             # write the summary details of the entire graph
             freightService.showAll()
             for line in p_file:
                 entries = line.split(":")
                 normalized_entries = [values.strip(" ").strip(":").strip("\n") for values in entries]
-                # print(normalized_entries)
                 if (normalized_entries[0] == SEARCH_TRANSPORT_HUB):
                     freightService.displayTransportHub()
                 elif (normalized_entries[0] == SEARCH_TRAIN):
