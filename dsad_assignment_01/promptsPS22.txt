@@ -1,7 +1,14 @@
 searchTransportHub
 searchTrain: T1122
 searchTrain: T1235
+searchTrain: T0000
+searchTrain: T3344
 searchCities: Calcutta: New Delhi
 searchCities: Chennai: Hyderabad
+searchCities: Mumbai: Pune
+searchCities: Bangalore: Bangalore
+searchCities: Calcutta: New Delhi
 ServiceAvailability: Calcutta: Mumbai
 ServiceAvailability: Nagpur: Vishakhapatnam
+ServiceAvailability: Calcutta: Chennai
+ServiceAvailability: Bangalore: Bangalore
