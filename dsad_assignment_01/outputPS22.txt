@@ -1,0 +1,128 @@
+--------Function showAll--------
+Total no. of freight trains: 6
+Total no. of cities: 11
+
+List of Freight trains: 
+T1235
+T2342
+T1122
+T2341
+T5623
+T3344
+
+List of cities: 
+Jaipur
+Calcutta
+Ahmedabad
+Bangalore
+New Delhi
+Mumbai
+Chennai
+Vishakhapatnam
+Hyderabad
+Patna
+Nagpur
+---------------------------------------
+
+--------Function displayTransportHub--------
+Main transport hub: Ahmedabad
+Number of trains visited: 3
+List of Freight trains: 
+T3344
+T1122
+T2341
+Main transport hub: New Delhi
+Number of trains visited: 3
+List of Freight trains: 
+T1235
+T2342
+T2341
+---------------------------------------
+
+--------Function displayConnectedCities--------
+Freight train number: T1122
+Number of cities connected: 3
+List of cities connected directly by T1122 : 
+Ahmedabad
+Mumbai
+Nagpur
+---------------------------------------
+
+--------Function displayConnectedCities--------
+Freight train number: T1235
+Number of cities connected: 2
+List of cities connected directly by T1235 : 
+New Delhi
+Chennai
+---------------------------------------
+
+--------Function displayConnectedCities--------
+Freight train number: T0000
+T0000does not exist.
+---------------------------------------
+
+--------Function displayConnectedCities--------
+Freight train number: T3344
+Number of cities connected: 4
+List of cities connected directly by T3344 : 
+Ahmedabad
+Patna
+Bangalore
+Jaipur
+---------------------------------------
+
+--------Function displayDirectTrain--------
+City A: Calcutta
+City B: New Delhi
+Package can be sent directly: Yes, T2342
+---------------------------------------
+
+--------Function displayDirectTrain--------
+City A: Chennai
+City B: Hyderabad
+Package can be sent directly: No
+---------------------------------------
+
+--------Function displayDirectTrain--------
+City A: Mumbai
+City B: Pune
+City Pune is not available.
+---------------------------------------
+
+--------Function displayDirectTrain--------
+City A: Bangalore
+City B: Bangalore
+Source and destination cities are same, hence no freight service is available.
+---------------------------------------
+
+--------Function displayDirectTrain--------
+City A: Calcutta
+City B: New Delhi
+Package can be sent directly: Yes, T2342
+---------------------------------------
+
+--------Function findServiceAvailable--------
+City A: Calcutta
+City B: Mumbai
+Can the package be sent: Yes, Calcutta > T2342 > New Delhi > T2341 > Ahmedabad > T1122 > Mumbai
+---------------------------------------
+
+--------Function findServiceAvailable--------
+City A: Nagpur
+City B: Vishakhapatnam
+Can the package be sent: No, Freight Service is not available.
+---------------------------------------
+
+--------Function findServiceAvailable--------
+City A: Calcutta
+City B: Chennai
+Can the package be sent: Yes, Calcutta > T2342 > New Delhi > T1235 > Chennai
+---------------------------------------
+
+--------Function findServiceAvailable--------
+City A: Bangalore
+City B: Bangalore
+Freight Service is not available.
+(Source and Target cities are same)
+---------------------------------------
+
