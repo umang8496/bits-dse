@@ -210,8 +210,8 @@ class Graph(object):
 #####################################################################
 
 
-# FileUtilities Functions
-class FileUtilities(object):
+# InputFileProcessor
+class InputFileProcessor(object):
     def __init__(self):
         self.READ_MODE = "r"
         self.list_of_trains = []
@@ -247,36 +247,37 @@ class FileUtilities(object):
 #####################################################################
 
 
+# FreightService
 class FreightService(object):
     def __init__(self):
         self.graph = None
-        self.fileUtilities = FileUtilities()
+        self.fileProcessor = InputFileProcessor()
 
     def readCityTrainfile(self, inputfile):
         # read the input file
-        self.fileUtilities.read_input_file(inputfile)
+        self.fileProcessor.read_input_file(inputfile)
         # create the collections of trains and cities
-        number_of_distinct_cities = self.fileUtilities.get_number_of_distinct_cities()
-        list_of_trains = self.fileUtilities.get_list_of_trains()
-        list_of_routes = self.fileUtilities.get_list_of_routes()
-        set_of_distinct_cities = self.fileUtilities.get_set_of_distinct_cities()
+        number_of_distinct_cities = self.fileProcessor.get_number_of_distinct_cities()
+        list_of_trains = self.fileProcessor.get_list_of_trains()
+        list_of_routes = self.fileProcessor.get_list_of_routes()
+        set_of_distinct_cities = self.fileProcessor.get_set_of_distinct_cities()
         # now create the Graph object and then initialize it
         self.graph = Graph(number_of_distinct_cities, list_of_trains, list_of_routes, set_of_distinct_cities)
         self.graph.initializeGraph()
         # self.graph.print_adjacency_matrix()  # uncomment while debugging
 
     def showAll(self):
-        print("--------Function showAll --------")
-        print("Total no. of freight trains:", self.fileUtilities.get_number_of_freight_trains())
-        print("Total no. of cities:", self.fileUtilities.get_number_of_distinct_cities())
+        print("--------Function showAll--------")
+        print("Total no. of freight trains:", self.fileProcessor.get_number_of_freight_trains())
+        print("Total no. of cities:", self.fileProcessor.get_number_of_distinct_cities())
         print()
-        if (self.fileUtilities.get_number_of_freight_trains() != 0) and (self.fileUtilities.get_number_of_distinct_cities() != 0):
+        if (self.fileProcessor.get_number_of_freight_trains() != 0) and (self.fileProcessor.get_number_of_distinct_cities() != 0):
             print("List of Freight trains:")
-            for train in self.fileUtilities.get_list_of_trains():
+            for train in self.fileProcessor.get_list_of_trains():
                 print(train)
             print()
             print("List of cities:")
-            for city in self.fileUtilities.get_set_of_distinct_cities():
+            for city in self.fileProcessor.get_set_of_distinct_cities():
                 print(city)
         print("---------------------------------------")
 
@@ -368,34 +369,74 @@ class FreightService(object):
 
 #####################################################################
 if __name__ == "__main__":
-    freightService = FreightService()
-    freightService.readCityTrainfile("inputPS22.txt")
-    
-    freightService.showAll()
-    freightService.displayTransportHub()
+    # Read the prompts file for processing the further instructions
+    promptsfile = "promptsPS22.txt"
+    outputfile = "outputPS22.txt"
+    p_file = None
+    o_file = None
+    SEARCH_TRANSPORT_HUB = "searchTransportHub"
+    SEARCH_TRAIN = "searchTrain"
+    SEARCH_CITIES = "searchCities"
+    SERVICE_AVAILABILITY = "ServiceAvailability"
+    try:
+        p_file = open(promptsfile, "r")
+        o_file = open(outputfile, "w")
+        if (p_file != None) and (o_file != None):
+            freightService = FreightService()
+            # read the input file and create the graph
+            freightService.readCityTrainfile("inputPS22.txt")
+            # write the summary details of the entire graph
+            freightService.showAll()
+            for line in p_file:
+                entries = line.split(":")
+                normalized_entries = [values.strip(" ").strip(":").strip("\n") for values in entries]
+                # print(normalized_entries)
+                if (normalized_entries[0] == SEARCH_TRANSPORT_HUB):
+                    freightService.displayTransportHub()
+                elif (normalized_entries[0] == SEARCH_TRAIN):
+                    freightService.displayConnectedCities(normalized_entries[1])
+                elif (normalized_entries[0] == SEARCH_CITIES):
+                    freightService.displayDirectTrain(normalized_entries[1], normalized_entries[2])
+                elif (normalized_entries[0] == SERVICE_AVAILABILITY):
+                    freightService.findServiceAvailable(normalized_entries[1], normalized_entries[2])
+                else:
+                    print("Unidentified Instruction Found :", normalized_entries[0])
+            p_file.close()
+        else:
+            print("Unable to read the prompt file.")
+    except FileNotFoundError:
+        print("Prompt File:", promptsfile, "is not found.")
 
-    freightService.displayDirectTrain("Mumbai", "Pune")
-    freightService.displayDirectTrain("Bangalore", "Bangalore")
-    freightService.displayDirectTrain("Mumbai", "Calcutta")
-    freightService.displayDirectTrain("Nagpur", "Chennai")
-    freightService.displayDirectTrain("Mumbai", "Ahmedabad")
-    freightService.displayDirectTrain("Ahmedabad", "New Delhi")
-    freightService.displayDirectTrain("Vishakhapatnam", "Hyderabad")
-    freightService.displayDirectTrain("New Delhi", "Chennai")
-    freightService.displayDirectTrain("Calcutta", "New Delhi")
-    
-    freightService.displayConnectedCities("T1122")
-    freightService.displayConnectedCities("T0000")
-    freightService.displayConnectedCities("T1235")
-    freightService.displayConnectedCities("T3344")
 
-    freightService.findServiceAvailable("Calcutta", "Chennai")
-    freightService.findServiceAvailable("Calcutta", "Mumbai")
-    freightService.findServiceAvailable("Calcutta", "Nagpur")
-    freightService.findServiceAvailable("Nagpur", "Vishakhapatnam")
-    freightService.findServiceAvailable("Nagpur", "Ahmedabad")
-    freightService.findServiceAvailable("Chennai", "Bangalore")
-    freightService.findServiceAvailable("Bangalore", "Chennai")
-    freightService.findServiceAvailable("Bangalore", "Bangalore")
+    # freightService = FreightService()
+    # Following function calls are meant for testing purpose
+    #
+    # freightService.readCityTrainfile("inputPS22.txt")
+    # freightService.showAll()
+    # freightService.displayTransportHub()
+    #
+    # freightService.displayDirectTrain("Mumbai", "Pune")
+    # freightService.displayDirectTrain("Bangalore", "Bangalore")
+    # freightService.displayDirectTrain("Mumbai", "Calcutta")
+    # freightService.displayDirectTrain("Nagpur", "Chennai")
+    # freightService.displayDirectTrain("Mumbai", "Ahmedabad")
+    # freightService.displayDirectTrain("Ahmedabad", "New Delhi")
+    # freightService.displayDirectTrain("Vishakhapatnam", "Hyderabad")
+    # freightService.displayDirectTrain("New Delhi", "Chennai")
+    # freightService.displayDirectTrain("Calcutta", "New Delhi")
+    #
+    # freightService.displayConnectedCities("T1122")
+    # freightService.displayConnectedCities("T0000")
+    # freightService.displayConnectedCities("T1235")
+    # freightService.displayConnectedCities("T3344")
+    #
+    # freightService.findServiceAvailable("Calcutta", "Chennai")
+    # freightService.findServiceAvailable("Calcutta", "Mumbai")
+    # freightService.findServiceAvailable("Calcutta", "Nagpur")
+    # freightService.findServiceAvailable("Nagpur", "Vishakhapatnam")
+    # freightService.findServiceAvailable("Nagpur", "Ahmedabad")
+    # freightService.findServiceAvailable("Chennai", "Bangalore")
+    # freightService.findServiceAvailable("Bangalore", "Chennai")
+    # freightService.findServiceAvailable("Bangalore", "Bangalore")
 
 
