@@ -182,10 +182,10 @@ class Graph(object):
             self.path = [source_node_index]
             self.is_connected(source_node_index, target_node_index, temp_adjacency_matrix, self.path)
             if (self.path[-1] == target_node_index):
-                print(self.path) # remove this
-                return True
+                # print(self.path) # remove this
+                return (True, self.path)
         if (self.path[-1] != target_node_index):
-            return False
+            return (False, self.path)
 
     def is_connected(self, source_node_index, target_node_index, temp_adjacency_matrix, path):
         self.visited_node_list[source_node_index] = 1
@@ -209,6 +209,16 @@ class Graph(object):
                     else:
                         temp_adjacency_matrix[source_node_index][i] = 0
                         temp_adjacency_matrix[i][source_node_index] = 0
+
+    def get_node_for_index(self, i):
+        return self.list_of_distinct_nodes[i]
+
+    def get_train_number_for(self, src, des):
+        all_edges_for_src = src.get_set_of_connected_edges()
+        for edge in all_edges_for_src:
+            train_number = edge.get_train_label()
+            if (edge.get_target().get_city_label() == des.get_city_label()):
+                return train_number
 
 
 #####################################################################
@@ -342,11 +352,10 @@ class FreightService(object):
                 print("Freight Service is not available.")
                 print("(Source and Target cities are same)")
             elif (city_a != city_b):
-                result = self.graph.is_reachable(city_a, city_b)
+                (result, path) = self.graph.is_reachable(city_a, city_b)
                 if (result):
-                    print("Can the package be sent: Yes ")
-                    # for e in route:
-                    #     print(e.get_source().get_city_label(), "<--->", e.get_train_label(), "<--->", e.get_target().get_city_label())
+                    print("Can the package be sent: Yes, ", end=" ")
+                    self.print_the_path(path)
                 else:
                     print("Can the package be sent: No, Freight Service is not available.")
         else:
@@ -355,6 +364,25 @@ class FreightService(object):
             if(not self.graph.is_city_available(city_b)):
                 print("City", city_b, "is not available.")
         print("---------------------------------------")
+
+    def print_the_path(self, node_index):
+        connected_nodes = []
+        for n in node_index:
+            connected_nodes.append(self.graph.get_node_for_index(n))
+        printable_path = []
+        printable_path.append(connected_nodes[0].get_city_label())
+        for f in range(1, len(connected_nodes)):
+            src = connected_nodes[f-1]
+            des = connected_nodes[f]
+            train_number = self.graph.get_train_number_for(src, des)
+            printable_path.append(train_number)
+            printable_path.append(des.get_city_label())
+
+        for f in printable_path:
+            print(f, end=" ")
+            if (f != printable_path[-1]):
+                print(">", end=" ")
+        print()
 
 
 #####################################################################
