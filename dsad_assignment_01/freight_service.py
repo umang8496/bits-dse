@@ -452,6 +452,7 @@ if __name__ == "__main__":
                     freightService.findServiceAvailable(normalized_entries[1], normalized_entries[2])
                 else:
                     print("Unidentified Instruction Found :", normalized_entries[0])
+            o_file.close()
             p_file.close()
         else:
             print("Unable to read the prompt file.")
