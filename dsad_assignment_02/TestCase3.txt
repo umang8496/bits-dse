@@ -1,0 +1,18 @@
+2/11/54
+7/5/23
+5/21/-27
+3/16/11
+9/15/21
+4/22/42
+8/8/-11
+10/13/29
+6/16/17
+1/19/31
+
+
+
+
+Budget : 100
+The projects that should be funded: 2,7,9,4,10,1
+Total ROI: 200
+Fund remaining: 61
