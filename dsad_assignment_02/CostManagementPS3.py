@@ -1,5 +1,5 @@
 #####################################################################
-# CostManagementPS3.py
+# weightsManagementPS3.py
 #####################################################################
 
 
@@ -21,7 +21,7 @@
 #####################################################################
 # Sample Output:
 # The projects that should be funded: 1,2,3,4,5,7,8,9
-# Total ROI: 411
+# Total profits: 411
 # Fund remaining: 28
 #####################################################################
 class CostManagement(object):
@@ -30,21 +30,21 @@ class CostManagement(object):
 
 
     def solve_knapsack_top_down(self, profits, weights, capacity):
-        self.dp = [[0 for x in range(capacity+1)] for y in range(len(profits))]
-        result = self.knapsack_recursive_top_down(self.dp, profits, weights, capacity, 0)
-        rev_dp = self.dp[::-1]
-        # print("dp:", self.dp)
-        # print("rev_dp:", rev_dp)
-        # self.print_selected_elements(self.dp, profits, weights, capacity)
-        self.print_selected_elements(rev_dp, profits, weights, capacity)
-        return result
-
+        dp = [[-1 for x in range(capacity+1)] for y in range(len(profits))]
+        result = self.knapsack_recursive_top_down(dp, profits, weights, capacity, 0)
+        self.dp = self.construct_table(profits, weights, capacity)
+        solution = self.get_optimal_solution_for_knapsack(self.dp, profits, weights, capacity)
+        self.print_the_funds_order(solution, weights)
+        fundRemaining = sum(weights) - sum(solution)
+        print("Total profits:", result)
+        print("Fund remaining:", fundRemaining)
+        
 
     def knapsack_recursive_top_down(self, dp, profits, weights, capacity, currentIndex):
         if capacity <= 0 or currentIndex >= len(profits):
             return 0
 
-        if dp[currentIndex][capacity] != 0:
+        if dp[currentIndex][capacity] != -1:
             return dp[currentIndex][capacity]
 
         profit1 = 0
@@ -57,12 +57,13 @@ class CostManagement(object):
         return dp[currentIndex][capacity]
 
 
-    def print_selected_elements(self, dp, profits, weights, capacity):
+    def get_optimal_solution_for_knapsack(self, dp, profits, weights, capacity):
         keep = list()
         n = len(weights)
         totalProfit = dp[n-1][capacity]
         for i in range(n-1, 0, -1):
-            if totalProfit != dp[i - 1][capacity]:
+            tmp = dp[i - 1][capacity]
+            if totalProfit != tmp:
                 keep.append(weights[i])
                 capacity -= weights[i]
                 totalProfit -= profits[i]
@@ -71,7 +72,7 @@ class CostManagement(object):
         return keep
 
 
-    def solve_knapsack_bottom_up(self, profits, weights, capacity):
+    def construct_table(self, profits, weights, capacity):
         n = len(profits)
         if capacity <= 0 or n == 0 or len(weights) != n:
             return 0
@@ -93,12 +94,15 @@ class CostManagement(object):
                     profit2 = dp[i - 1][c]
                     dp[i][c] = max(profit1, profit2)
 
-        solution = self.print_selected_elements(dp, profits, weights, capacity)
-        self.print_the_funds_order(solution, weights)
-        ROI =  dp[n-1][capacity]
-        fundRemaining = sum(weights) - sum(solution)
-        print("Total ROI:", ROI)
-        print("Fund remaining:", fundRemaining)
+        return dp
+        # solution = self.get_optimal_solution_for_knapsack(dp, profits, weights, capacity)
+        # print("solution:", solution)
+        # # print("dp:", dp)
+        # self.print_the_funds_order(solution, weights)
+        # profits =  dp[n-1][capacity]
+        # fundRemaining = sum(weights) - sum(solution)
+        # print("Total profits:", profits)
+        # print("Fund remaining:", fundRemaining)
 
 
     def print_the_funds_order(self, solution, weights):
@@ -121,21 +125,21 @@ class CostManagement(object):
         print()
 
 
-    def solve_knapsack_brute_force(self, profits, weights, capacity):
-        return self.knapsack_recursive_brute_force(profits, weights, capacity, 0)
+    # def solve_knapsack_brute_force(self, profits, weights, capacity):
+    #     return self.knapsack_recursive_brute_force(profits, weights, capacity, 0)
 
 
-    def knapsack_recursive_brute_force(self, profits, weights, capacity, currentIndex):
-        if capacity <= 0 or currentIndex >= len(profits):
-            return 0
+    # def knapsack_recursive_brute_force(self, profits, weights, capacity, currentIndex):
+    #     if capacity <= 0 or currentIndex >= len(profits):
+    #         return 0
 
-        profit1 = 0
-        if weights[currentIndex] <= capacity:
-            profit1 = profits[currentIndex] + self.knapsack_recursive_brute_force(profits, weights, capacity - weights[currentIndex], currentIndex + 1)
+    #     profit1 = 0
+    #     if weights[currentIndex] <= capacity:
+    #         profit1 = profits[currentIndex] + self.knapsack_recursive_brute_force(profits, weights, capacity - weights[currentIndex], currentIndex + 1)
 
-        profit2 = self.knapsack_recursive_brute_force(profits, weights, capacity, currentIndex + 1)
+    #     profit2 = self.knapsack_recursive_brute_force(profits, weights, capacity, currentIndex + 1)
 
-        return max(profit1, profit2)
+    #     return max(profit1, profit2)
 
 
 ####################################################################
@@ -145,33 +149,58 @@ if __name__ == "__main__":
     inputfilename = "inputPS3.txt"
     outputfilename = "outputPS3.txt"
     inputfile = None
-    cost = []
-    roi = []
+    weights = []
+    profits = []
     capacity = 150
     try:
         inputfile = open(inputfilename, "r")
         if (inputfile != None):
             for line in inputfile:
                 line = line.split("/")
-                cost.append(int(line[1]))
-                roi.append(int(line[2]))
+                weights.append(int(line[1]))
+                profits.append(int(line[2]))
     except FileNotFoundError:
         print("Input File:", inputfile, "is not found.")
 
-    # cost = [1, 3, 4, 5]
-    # roi = [1, 4, 5, 7]
+    # weights = [1, 3, 4, 5]
+    # profits = [1, 4, 5, 7]
     # capacity = 7
 
-    # cost = [1, 2, 3]
-    # roi = [2.5, 2, 4.5]
-    # capacity = 5
-
-    # cost = [2, 1, 1, 3]
-    # roi = [2, 8, 1, 10]
+    # weights = [2, 1, 1, 3]
+    # profits = [2, 8, 1, 10]
     # capacity = 4
 
+    # weights = [1, 2, 3]
+    # profits = [2.5, 2, 4.5]
+    # capacity = 5
+
+    # weights = [23, 21, 12, 18, 16, 17, 17, 8, 12, 7]
+    # profits = [10, 12, 60, 45, 23, 46, 46, 31, 43, 20]
+    # capacity = 60
+
+    # weights=[23, 21, 12, 18, 16, 17, 18, 8, 12, 7]
+    # profits=[10, 12, 60, 45, 23, 46, 47, 31, 43, 14]
+    # capacity = 90
+
+    # weights=[19, 11, 16, 22, 21, 16, 5, 8, 15, 13]
+    # profits=[31, 54, 11, 42, -27, 17, 23, -11, 21, 29]
+    # capacity = 100
+
+    # weights=[30, 17, 20, 10, 13, 10, 16, 25, 15, 18]
+    # profits=[60, 35, 55, 40, 66, 20, 35, 50, 70, 10]
+    # capacity = 150
+
+    # weights = [2, 4, 3, 5, 5]
+    # profits = [3, 4, 1, 2, 6]
+    # capacity = 12
+
+    # print("weights:", weights)
+    # print("profits:", profits)
+    # print("capacity:", capacity)
+    # print()
+    # print()
     cm  = CostManagement()
-    # print(cm.solve_knapsack_top_down(roi, cost, capacity))
-    cm.solve_knapsack_bottom_up(roi, cost, capacity)
+    cm.solve_knapsack_top_down(profits, weights, capacity)
+    # cm.construct_table(profits, weights, capacity)
 
 
