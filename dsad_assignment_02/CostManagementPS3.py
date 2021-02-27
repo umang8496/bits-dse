@@ -29,9 +29,9 @@ class CostManagement(object):
         self.dp = []
 
 
-    def solve_knapsack_top_down(self, profits, weights, capacity):
+    def solve_knapsack_problem(self, profits, weights, capacity):
         dp = [[-1 for x in range(capacity+1)] for y in range(len(profits))]
-        result = self.knapsack_recursive_top_down(dp, profits, weights, capacity, 0)
+        result = self.recursive_knapsack(dp, profits, weights, capacity, 0)
         self.dp = self.construct_table(profits, weights, capacity)
         solution = self.get_optimal_solution_for_knapsack(self.dp, profits, weights, capacity)
         self.print_the_funds_order(solution, weights)
@@ -40,7 +40,7 @@ class CostManagement(object):
         print("Fund remaining:", fundRemaining)
         
 
-    def knapsack_recursive_top_down(self, dp, profits, weights, capacity, currentIndex):
+    def recursive_knapsack(self, dp, profits, weights, capacity, currentIndex):
         if capacity <= 0 or currentIndex >= len(profits):
             return 0
 
@@ -49,9 +49,9 @@ class CostManagement(object):
 
         profit1 = 0
         if weights[currentIndex] <= capacity:
-            profit1 = profits[currentIndex] + self.knapsack_recursive_top_down(dp, profits, weights, capacity - weights[currentIndex], currentIndex + 1)
+            profit1 = profits[currentIndex] + self.recursive_knapsack(dp, profits, weights, capacity - weights[currentIndex], currentIndex + 1)
 
-        profit2 = self.knapsack_recursive_top_down(dp, profits, weights, capacity, currentIndex + 1)
+        profit2 = self.recursive_knapsack(dp, profits, weights, capacity, currentIndex + 1)
 
         dp[currentIndex][capacity] = max(profit1, profit2)
         return dp[currentIndex][capacity]
@@ -200,7 +200,7 @@ if __name__ == "__main__":
     # print()
     # print()
     cm  = CostManagement()
-    cm.solve_knapsack_top_down(profits, weights, capacity)
+    cm.solve_knapsack_problem(profits, weights, capacity)
     # cm.construct_table(profits, weights, capacity)
 
 
