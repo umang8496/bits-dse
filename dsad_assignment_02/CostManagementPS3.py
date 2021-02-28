@@ -37,8 +37,8 @@ class CostManagement(object):
         solution = self.get_optimal_solution_for_knapsack(self.dp, profits, weights, capacity)
         self.print_the_funds_order(solution, weights)
         fundRemaining = sum(weights) - sum(solution)
-        # print("Total profits:", result)
-        self.fw.write(str("Total profits: " + str(result)))
+        # print("Total ROI:", result)
+        self.fw.write(str("Total ROI: " + str(result)))
         self.fw.write(str("\n"))
         # print("Fund remaining:", fundRemaining)
         self.fw.write(str("Fund remaining: " + str(fundRemaining)))
@@ -168,7 +168,7 @@ if __name__ == "__main__":
             inputfile.close()
             outputfile.close()
         else:
-            print("Unable to read the prompt file.")
+            print("Unable to access the files.")
     except FileNotFoundError:
         print("Input File:", inputfile, "is not found.")
 
