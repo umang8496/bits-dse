@@ -25,8 +25,9 @@
 # Fund remaining: 28
 #####################################################################
 class CostManagement(object):
-    def __init__(self):
+    def __init__(self, outputfile):
         self.dp = []
+        self.fw = outputfile
 
 
     def solve_knapsack_problem(self, profits, weights, capacity):
@@ -36,8 +37,12 @@ class CostManagement(object):
         solution = self.get_optimal_solution_for_knapsack(self.dp, profits, weights, capacity)
         self.print_the_funds_order(solution, weights)
         fundRemaining = sum(weights) - sum(solution)
-        print("Total profits:", result)
-        print("Fund remaining:", fundRemaining)
+        # print("Total profits:", result)
+        self.fw.write(str("Total profits: " + str(result)))
+        self.fw.write(str("\n"))
+        # print("Fund remaining:", fundRemaining)
+        self.fw.write(str("Fund remaining: " + str(fundRemaining)))
+        self.fw.write(str("\n"))
         
 
     def recursive_knapsack(self, dp, profits, weights, capacity, currentIndex):
@@ -95,14 +100,6 @@ class CostManagement(object):
                     dp[i][c] = max(profit1, profit2)
 
         return dp
-        # solution = self.get_optimal_solution_for_knapsack(dp, profits, weights, capacity)
-        # print("solution:", solution)
-        # # print("dp:", dp)
-        # self.print_the_funds_order(solution, weights)
-        # profits =  dp[n-1][capacity]
-        # fundRemaining = sum(weights) - sum(solution)
-        # print("Total profits:", profits)
-        # print("Fund remaining:", fundRemaining)
 
 
     def print_the_funds_order(self, solution, weights):
@@ -116,13 +113,17 @@ class CostManagement(object):
                     preservedIndex.append(i+1)
                     break
         preservedIndex.sort()
-        print("The projects that should be funded: ", end="")
+        # print("The projects that should be funded: ", end="")
+        self.fw.write(str("The projects that should be funded: "))
         for f in preservedIndex:
             if f == preservedIndex[-1]:
-                print(str(f), end="")
+                # print(str(f), end="")
+                self.fw.write(str(f))
             else:
-                print(str(f) + ", ", end="")
-        print()
+                # print(str(f) + ", ", end="")
+                self.fw.write(str(f) + ", ")
+        # print()
+        self.fw.write(str("\n"))
 
 
     # def solve_knapsack_brute_force(self, profits, weights, capacity):
@@ -149,16 +150,25 @@ if __name__ == "__main__":
     inputfilename = "inputPS3.txt"
     outputfilename = "outputPS3.txt"
     inputfile = None
+    outputfile = None
     weights = []
     profits = []
     capacity = 150
     try:
         inputfile = open(inputfilename, "r")
-        if (inputfile != None):
+        outputfile = open(outputfilename, "w")
+        if (inputfile != None) and (outputfile != None):
             for line in inputfile:
                 line = line.split("/")
                 weights.append(int(line[1]))
                 profits.append(int(line[2]))
+            cm  = CostManagement(outputfile)
+            if (cm != None):
+                cm.solve_knapsack_problem(profits, weights, capacity)
+            inputfile.close()
+            outputfile.close()
+        else:
+            print("Unable to read the prompt file.")
     except FileNotFoundError:
         print("Input File:", inputfile, "is not found.")
 
@@ -199,8 +209,8 @@ if __name__ == "__main__":
     # print("capacity:", capacity)
     # print()
     # print()
-    cm  = CostManagement()
-    cm.solve_knapsack_problem(profits, weights, capacity)
+    # cm  = CostManagement()
+    # cm.solve_knapsack_problem(profits, weights, capacity)
     # cm.construct_table(profits, weights, capacity)
 
 
